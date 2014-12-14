@@ -15,6 +15,4 @@
 # under the License.
 #
 
-
-def test():
-    pass
+VERSION = '0.1.0'

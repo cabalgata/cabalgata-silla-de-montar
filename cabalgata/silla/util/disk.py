@@ -14,7 +14,33 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+""" Disk utilities
+"""
+import contextlib
+import os
+import shutil
+import tempfile
+import errno
 
 
-def test():
-    pass
+@contextlib.contextmanager
+def temp_directory(*args, **kwargs):
+    """
+    Context manager returns a path created by mkdtemp and cleans it up afterwards.
+    """
+
+    path = tempfile.mkdtemp(*args, **kwargs)
+    try:
+        yield path
+    finally:
+        shutil.rmtree(path)
+
+
+def make_directories(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise

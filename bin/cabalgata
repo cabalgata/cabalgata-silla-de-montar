@@ -20,6 +20,36 @@ A command line version of silla de montar.
 """
 
 
+def install():
+    """Install"""
+    pass
+
+
+def start():
+    """Start"""
+    pass
+
+
+def stop():
+    """Stop"""
+    pass
+
+
+def restart():
+    """Restart"""
+    pass
+
+
+def kill():
+    """Kill"""
+    pass
+
+
+def uninstall():
+    """Uninstall"""
+    pass
+
+
 def help(fnc=None):
     """Prints this help message"""
     import inspect
@@ -53,17 +83,17 @@ if __name__ == '__main__':
     self = sys.modules['__main__']
     if len(sys.argv) >= 2:
         try:
-            cmd = getattr(self, sys.argv[1])
+            _cmd = getattr(self, sys.argv[1])
         except:
-            cmd = None
+            _cmd = None
         args = sys.argv[2:]
     else:
-        cmd = help
+        _cmd = help
         args = []
-    if not cmd:
-        cmd = help
+    if not _cmd:
+        _cmd = help
     try:
-        cmd(*args)
+        _cmd(*args)
     except TypeError, e:
         print e
-        help(cmd.__name__)
+        help(_cmd.__name__)

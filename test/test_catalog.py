@@ -14,7 +14,24 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+from distutils import version
+
+from cabalgata.silla import catalog
+from cabalgata.silla.util import disk
 
 
-def test():
-    pass
+def test_catalog():
+    json = {'version': '1.2.3'}
+    c = catalog.Catalog.from_json(json)
+
+    assert c == catalog.Catalog('1.2.3')
+    assert c.to_json() == json
+
+
+def test_initialize():
+    with disk.temp_directory() as temp_dir:
+        catalog.initialize(catalog_dir=temp_dir)
+
+        with catalog.load_catalog(temp_dir) as c:
+            assert c.version
+            assert version.StrictVersion(c.version)
