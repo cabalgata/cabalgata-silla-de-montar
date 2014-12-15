@@ -14,17 +14,3 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-""" Plugins
-"""
-import pkg_resources
-
-ENTRY_POINT = 'cabalgata.plugins'
-
-
-def load_plugins(name):
-    for entry_point in pkg_resources.iter_entry_points(ENTRY_POINT):
-        if entry_point.name == name:
-            plugin_class = entry_point.load(require=False)
-            return plugin_class()
-
-    raise KeyError

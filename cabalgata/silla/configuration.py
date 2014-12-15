@@ -14,17 +14,24 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-""" Plugins
+""" Configuration of installation and service
 """
-import pkg_resources
 
-ENTRY_POINT = 'cabalgata.plugins'
+NO_DEFAULT = object()
 
 
-def load_plugins(name):
-    for entry_point in pkg_resources.iter_entry_points(ENTRY_POINT):
-        if entry_point.name == name:
-            plugin_class = entry_point.load(require=False)
-            return plugin_class()
+class Definition(object):
+    def __init__(self, name, kind, secret, default=NO_DEFAULT):
+        self.name = name
+        self.kind = kind
+        self.secret = secret
+        self.default = default
 
-    raise KeyError
+    def as_tuple(self):
+        return self.name, self.kind, self.secret, self.default
+
+    def __eq__(self, other):
+        return self.as_tuple() == other.as_tuple()
+
+    def __repr__(self):
+        return 'Definition(%r, %r, %r, %r, %r)' % self.as_tuple()

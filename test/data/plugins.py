@@ -14,20 +14,18 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+from cabalgata.silla.configuration import Definition
 
 
-class A(object):
-    name = 'a'
-
-    def __init__(self):
-        self.running = False
+class FactoryA(object):
+    definitions = [Definition('f', 'int', False, )]
 
     @staticmethod
     def versions():
         return ['1.2.3', '1.2.4']
 
     @classmethod
-    def install(cls, version, directory):
+    def install(cls, version, directory, configuration=None):
         pass
 
     @classmethod
@@ -36,11 +34,18 @@ class A(object):
 
     @classmethod
     def load(cls, directory):
-        return A()
+        return A('1.2.3')
 
-    @property
-    def version(self):
-        return '1.2.3'
+
+class A(object):
+    definitions = [Definition('f', 'int', False, )]
+
+    def __init__(self, version):
+        self.version = version
+        self.running = False
+
+    def configure(self, configuration):
+        pass
 
     def start(self):
         self.running = True
@@ -50,27 +55,3 @@ class A(object):
 
     def kill(self):
         self.running = False
-
-
-class B(object):
-    name = 'b'
-
-    @staticmethod
-    def versions():
-        return ['1.2.3', '1.2.4']
-
-
-class C(object):
-    name = 'c'
-
-    @staticmethod
-    def versions():
-        return ['1.2.3', '1.2.4']
-
-
-class D(object):
-    name = 'd'
-
-    @staticmethod
-    def versions():
-        return ['1.2.3', '1.2.4']

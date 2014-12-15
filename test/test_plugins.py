@@ -24,10 +24,7 @@ from cabalgata.silla.util import disk
 
 def plugin_entry_points():
     return (
-        pkg_resources.EntryPoint.parse('a=data.plugins:A'),
-        pkg_resources.EntryPoint.parse('b=data.plugins:B'),
-        pkg_resources.EntryPoint.parse('c=data.plugins:C'),
-        pkg_resources.EntryPoint.parse('d=data.plugins:D'),
+        pkg_resources.EntryPoint.parse('a=data.plugins:FactoryA'),
     )
 
 
@@ -37,8 +34,8 @@ def test_load_plugins(mock_pkg_resources):
 
     plugin = plugins.load_plugins('a')
 
-    assert plugin.name == 'a'
     assert plugin.versions
+    assert plugin.definitions
 
     try:
         plugins.load_plugins('does_not_exist')
