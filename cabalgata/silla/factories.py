@@ -14,17 +14,22 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-""" Plugins
+""" Factories
 """
 import pkg_resources
 
-ENTRY_POINT = 'cabalgata.plugins'
+ENTRY_POINT = 'cabalgata.factories'
 
 
-def load_plugins(name):
+def load_factory(name, directory, configuration=None):
+    """ Load a factory and have it initialize in a particular directory
+    :param name: the name of the plugin to load
+    :param directory: the directory where the factory will reside
+    :return:
+    """
     for entry_point in pkg_resources.iter_entry_points(ENTRY_POINT):
         if entry_point.name == name:
-            plugin_class = entry_point.load(require=False)
-            return plugin_class()
+            factory_class = entry_point.load(require=False)
+            return factory_class(directory, configuration)
 
     raise KeyError

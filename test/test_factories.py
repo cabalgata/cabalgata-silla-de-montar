@@ -15,62 +15,69 @@
 # under the License.
 #
 import pkg_resources
-
 import mock
 
-from cabalgata.silla import plugins
+from cabalgata.silla import factories
 from cabalgata.silla.util import disk
 
 
 def plugin_entry_points():
     return (
-        pkg_resources.EntryPoint.parse('a=data.plugins:FactoryA'),
+        pkg_resources.EntryPoint.parse('a=data.factories:FactoryA'),
     )
 
 
 @mock.patch('pkg_resources.iter_entry_points')
-def test_load_plugins(mock_pkg_resources):
+def test_load_factory(mock_pkg_resources):
     mock_pkg_resources.return_value = plugin_entry_points()
 
-    plugin = plugins.load_plugins('a')
+    with disk.temp_directory() as temp_directory:
+        factory = factories.load_factory('a', temp_directory)
 
-    assert plugin.versions
-    assert plugin.definitions
+        assert factory.versions
+        assert factory.definitions
 
-    try:
-        plugins.load_plugins('does_not_exist')
+        try:
+            factories.load_factory('does_not_exist', temp_directory)
 
-        assert False, 'Should have raised an KeyError'
-    except KeyError:
-        pass
+            assert False, 'Should have raised an KeyError'
+        except KeyError:
+            pass
 
 
 @mock.patch('pkg_resources.iter_entry_points')
 def test_install(mock_pkg_resources):
     mock_pkg_resources.return_value = plugin_entry_points()
 
-    plugin = plugins.load_plugins('a')
-
     with disk.temp_directory() as temp_directory:
-        plugin.install('1.2.3', temp_directory)
+        factory = factories.load_factory('a', temp_directory)
 
-        p = plugin.load(temp_directory)
+        assert not factory.installed
+
+        factory.install('test', '1.2.3')
+
+        installed = factory.installed
+        assert installed['test'] == '1.2.3'
+
+        p = factory.load('test')
 
         assert p.version == '1.2.3'
 
-        plugin.uninstall(temp_directory)
+        factory.uninstall('test')
+
+        assert not factory.installed
 
 
 @mock.patch('pkg_resources.iter_entry_points')
 def test_start(mock_pkg_resources):
     mock_pkg_resources.return_value = plugin_entry_points()
 
-    plugin = plugins.load_plugins('a')
-
     with disk.temp_directory() as temp_directory:
-        plugin.install('1.2.3', temp_directory)
+        factory = factories.load_factory('a', temp_directory)
 
-        p = plugin.load(temp_directory)
+        factory.install('test', '1.2.3')
+
+        p = factory.load('test')
         assert not p.running
 
         p.start()
@@ -83,4 +90,4 @@ def test_start(mock_pkg_resources):
         p.kill()
         assert not p.running
 
-        plugin.uninstall(temp_directory)
+        factory.uninstall('test')

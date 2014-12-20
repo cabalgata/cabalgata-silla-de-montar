@@ -20,21 +20,24 @@ from cabalgata.silla.configuration import Definition
 class FactoryA(object):
     definitions = [Definition('f', 'int', False, )]
 
+    def __init__(self, directory, configuration=None):
+        self.directory = directory
+        self.installed = {}
+        self.configuration = configuration or {}
+
     @staticmethod
     def versions():
         return ['1.2.3', '1.2.4']
 
-    @classmethod
-    def install(cls, version, directory, configuration=None):
-        pass
+    def install(self, name, version, configuration=None):
+        self.installed[name] = version
+        return A(version)
 
-    @classmethod
-    def uninstall(cls, directory):
-        pass
+    def uninstall(self, name):
+        self.installed.pop(name)
 
-    @classmethod
-    def load(cls, directory):
-        return A('1.2.3')
+    def load(self, name):
+        return A(self.installed[name])
 
 
 class A(object):
@@ -43,6 +46,7 @@ class A(object):
     def __init__(self, version):
         self.version = version
         self.running = False
+        self.configuration = {}
 
     def configure(self, configuration):
         pass
