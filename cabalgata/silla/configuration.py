@@ -34,4 +34,4 @@ class Definition(object):
         return self.as_tuple() == other.as_tuple()
 
     def __repr__(self):
-        return 'Definition(%r, %r, %r, %r, %r)' % self.as_tuple()
+        return 'Definition(%r, %r, %r, %r)' % self.as_tuple()
